@@ -31,6 +31,8 @@ If you want to tolerate some vulnerabilities as they don't affect your project, 
 
 Only print advisories with severity greater than or equal to `<severity>`.
 
+This can also be set via `auditLevel` in `pnpm-workspace.yaml`.
+
 ### --fix
 
 Add overrides to the `package.json` file in order to force non-vulnerable versions of the dependencies.

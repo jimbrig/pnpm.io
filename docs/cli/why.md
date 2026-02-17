@@ -5,13 +5,9 @@ title: pnpm why
 
 Shows all packages that depend on the specified package.
 
-:::caution
+The output is a reverse dependency tree: the searched package appears at the root, with its dependents as branches, walking back to workspace roots.
 
-If the Dependencies Tree has more than 10 results (end leaves), the output will be truncated to 10 end leaves.
-
-This makes the output more readable and avoids memory issues.
-
-:::
+Duplicate subtrees are deduplicated in the output and shown as "deduped".
 
 ## Options
 

@@ -118,6 +118,12 @@ time.
 
 
 
+:::note
+
+Local `file:` protocol dependencies are skipped during `pnpm fetch`, since they reference directories that may not be available at fetch time (e.g. in Docker builds).
+
+:::
+
 ## Options
 
 ### --dev, -D

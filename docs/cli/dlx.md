@@ -22,6 +22,12 @@ You may also specify which exact version of the package you'd like to use:
 pnpm dlx create-vue@next my-app
 ```
 
+The `catalog:` protocol is also supported, allowing you to use versions defined in your workspace catalogs:
+
+```
+pnpm dlx shx@catalog:
+```
+
 ## Options
 
 ### --package &lt;name\>

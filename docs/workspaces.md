@@ -74,8 +74,10 @@ When a workspace package is packed into an archive (whether it's through
 `pnpm pack` or one of the publish commands like `pnpm publish`), we dynamically
 replace any `workspace:` dependency by:
 
-* The corresponding version in the target workspace (if you use `workspace:*`, `workspace:~`, or `workspace:^`)
+* The corresponding version in the target workspace (if you use `workspace:`, `workspace:*`, `workspace:~`, or `workspace:^`)
 * The associated semver range (for any other range type)
+
+A bare `workspace:` without a version range is treated as `workspace:*`.
 
 So for example, if we have `foo`, `bar`, `qar`, `zoo` in the workspace and they all are at version `1.5.0`, the following:
 
