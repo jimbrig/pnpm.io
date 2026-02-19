@@ -28,7 +28,7 @@ Values in the configuration files may contain env variables using the `${NAME}` 
 ### overrides
 
 This field allows you to instruct pnpm to override any dependency in the
-dependency graph. This is useful for enforcing all your packages to use a single
+dependency graph, including peer dependencies. This is useful for enforcing all your packages to use a single
 version of a dependency, backporting a fix, replacing a dependency with a fork, or
 removing an unused dependency.
 
@@ -80,6 +80,21 @@ overrides:
 ```
 
 This feature is especially useful with `optionalDependencies`, where most optional packages can be safely skipped.
+
+#### Overriding peer dependencies
+
+Overrides also apply to `peerDependencies`. The behavior depends on the type of version specifier used in the override:
+
+- **Semver ranges** (e.g., `^1.0.0`), **workspace**, and **catalog** protocols: the peer dependency is overridden and remains a peer dependency.
+- **Non-range specifiers** such as `link:` or `file:` protocols: the peer dependency is overridden and moved to `dependencies`, since these are not valid peer dependency ranges.
+- **Removal** (`-`): the peer dependency is removed entirely.
+
+For example, to override the `react` peer dependency of `react-dom`:
+
+```yaml title="pnpm-workspace.yaml"
+overrides:
+  "react-dom>react": "18.1.0"
+```
 
 ### packageExtensions
 
