@@ -1416,7 +1416,48 @@ Set this to `true` if the registry that you are using returns the "time" field i
 * Default: **true**
 * Type: **Boolean**
 
-When `false`, the `NODE_PATH` environment variable is not set in the command shims.
+When `true`, pnpm sets the `NODE_PATH` environment variable in command shims
+(the wrapper scripts created in `node_modules/.bin`). When `false`, `NODE_PATH`
+is not set.
+
+#### Why this is needed
+
+pnpm's [isolated `node_modules` layout] means that a package can only access its
+own declared dependencies. However, when a CLI tool runs via a command shim, some
+libraries (notably [`import-local`], used by jest, eslint, and others) resolve
+modules from the **current working directory** rather than from the binary's own
+location. Since the working directory is the project root — not the package inside
+the virtual store — the standard `node_modules` resolution from the CWD won't
+find the binary's transitive dependencies.
+
+To bridge this gap, pnpm includes two types of paths in `NODE_PATH`:
+
+1. **The package's own dependencies directory** (e.g.,
+   `.pnpm/pkg@version/node_modules`) — this allows CWD-based resolution to find
+   the correct versions of the package's sibling dependencies.
+2. **The hoisted `node_modules` directory** (e.g., `.pnpm/node_modules`) — this
+   is the directory where hoisted packages are placed when [`hoistPattern`] is
+   set. Node.js cannot discover this directory through its standard resolution
+   algorithm, so it must be provided via `NODE_PATH`.
+
+`NODE_PATH` is also essential when [`enableGlobalVirtualStore`] is enabled.
+With a global virtual store, packages are symlinked from a central location
+outside the project, so Node.js's standard upward `node_modules` traversal from
+the binary's real path won't reach the project's own `node_modules` or its hoisted
+dependencies. In this case, `NODE_PATH` must include both the project's root
+`node_modules` and the hoisted directory at `node_modules/.pnpm/node_modules` to
+ensure correct resolution.
+
+#### When to disable
+
+You may set this to `false` if you are certain that none of the CLI tools in your
+project resolve modules from the working directory and you are not using a global
+virtual store. Disabling it produces slightly simpler command shims.
+
+[isolated `node_modules` layout]: ./symlinked-node-modules-structure.md
+[`import-local`]: https://github.com/sindresorhus/import-local
+[`hoistPattern`]: #hoistpattern
+[`enableGlobalVirtualStore`]: #enableglobalvirtualstore
 
 [`@yarnpkg/extensions`]: https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts
 [full metadata]: https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
