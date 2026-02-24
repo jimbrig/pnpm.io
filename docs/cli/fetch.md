@@ -23,7 +23,7 @@ WORKDIR /path/to/somewhere
 RUN corepack enable pnpm && corepack install -g pnpm@next-11
 
 # Files required by pnpm install
-COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs ./
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.mjs ./
 
 # If you patched any package, include patches before install too
 COPY patches patches
@@ -38,7 +38,7 @@ CMD [ "node", "server.js" ]
 ```
 
 As long as there are no changes to `.npmrc`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`,
-`.pnpmfile.cjs`, docker build cache is still valid up to the layer of
+`.pnpmfile.mjs`, docker build cache is still valid up to the layer of
 `RUN pnpm install --frozen-lockfile --prod`, which cost most of the time
 when building a docker image.
 
@@ -58,7 +58,7 @@ WORKDIR /path/to/somewhere
 RUN corepack enable pnpm && corepack install -g pnpm@next-11
 
 # Files required by pnpm install
-COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs ./
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.mjs ./
 
 # If you patched any package, include patches before install too
 COPY patches patches

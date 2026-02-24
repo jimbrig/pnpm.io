@@ -6,15 +6,15 @@ title: Finders
 Added in: v10.16.0
 
 Finder functions let you **search your dependency graph** by any property of a package, not just its name.
-They can be declared in [.pnpmfile.cjs] and used with [pnpm list] and [pnpm why].
+They can be declared in [.pnpmfile.mjs] and used with [pnpm list] and [pnpm why].
 
-[.pnpmfile.cjs]: ./pnpmfile.md
+[.pnpmfile.mjs]: ./pnpmfile.md
 [pnpm list]: ./cli/list.md
 [pnpm why]: ./cli/why.md
 
 ## Defining finder functions
 
-Finder functions are declared in your project’s [.pnpmfile.cjs] file under the finders export.
+Finder functions are declared in your project’s [.pnpmfile.mjs] file under the finders export.
 Each function receives a context object and must return either:
 
 * `true` → include this dependency in the results,
@@ -23,12 +23,10 @@ Each function receives a context object and must return either:
 
 Example: a finder that matches any dependency with **React 17** in `peerDependencies`:
 
-```js title=".pnpmfile.cjs"
-module.exports = {
-  finders: {
-    react17: (ctx) => {
-      return ctx.readManifest().peerDependencies?.react === "^17.0.0"
-    }
+```js title=".pnpmfile.mjs"
+export const finders = {
+  react17: (ctx) => {
+    return ctx.readManifest().peerDependencies?.react === "^17.0.0"
   }
 }
 ```
@@ -66,15 +64,13 @@ A finder can also return a string. That string will be shown alongside the match
 Example: print the package license:
 
 ```js
-module.exports = {
-  finders: {
-    react17: (ctx) => {
-      const manifest = ctx.readManifest()
-      if (manifest.peerDependencies?.react === "^17.0.0") {
-        return `license: ${manifest.license}`
-      }
-      return false
+export const finders = {
+  react17: (ctx) => {
+    const manifest = ctx.readManifest()
+    if (manifest.peerDependencies?.react === "^17.0.0") {
+      return `license: ${manifest.license}`
     }
+    return false
   }
 }
 ```

@@ -29,21 +29,19 @@ configDependencies:
 
 ### Installing Dependencies Used in Hooks
 
-Config dependencies are installed **before** hooks from your [`.pnpmfile.cjs`] are loaded, allowing you to import logic from config packages.
+Config dependencies are installed **before** hooks from your [`.pnpmfile.mjs`] are loaded, allowing you to import logic from config packages.
 
 Example:
 
-```js title=".pnpmfile.cjs"
-const { readPackage } = require('.pnpm-config/my-hooks')
+```js title=".pnpmfile.mjs"
+import { readPackage } from '.pnpm-config/my-hooks'
 
-module.exports = {
-  hooks: {
-    readPackage
-  }
+export const hooks = {
+  readPackage
 }
 ```
 
-[`.pnpmfile.cjs`]: ./pnpmfile.md
+[`.pnpmfile.mjs`]: ./pnpmfile.md
 
 ### Updating pnpm Settings Dynamically
 
@@ -51,14 +49,12 @@ Using the [`updateConfig`] hook, you can dynamically update pnpm’s settings us
 
 For example, the following `pnpmfile` adds a new [catalog] entry to pnpm's configuration:
 
-```js title="@myorg/pnpm-plugin-my-catalogs/pnpmfile.cjs"
-module.exports = {
-  hooks: {
-    updateConfig (config) {
-      config.catalogs.default ??= {}
-      config.catalogs.default['is-odd'] = '1.0.0'
-      return config
-    }
+```js title="@myorg/pnpm-plugin-my-catalogs/pnpmfile.mjs"
+export const hooks = {
+  updateConfig (config) {
+    config.catalogs.default ??= {}
+    config.catalogs.default['is-odd'] = '1.0.0'
+    return config
   }
 }
 ```

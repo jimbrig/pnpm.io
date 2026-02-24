@@ -1,14 +1,14 @@
 ---
 id: pnpmfile
-title: .pnpmfile.cjs
+title: .pnpmfile.mjs
 ---
 
 pnpm lets you hook directly into the installation process via special functions
-(hooks). Hooks can be declared in a file called `.pnpmfile.cjs`.
+(hooks). Hooks can be declared in a file called `.pnpmfile.mjs` (ESM) or `.pnpmfile.cjs` (CommonJS).
 
-By default, `.pnpmfile.cjs` should be located in the same directory as the
+By default, `.pnpmfile.mjs` should be located in the same directory as the
 lockfile. For instance, in a [workspace](workspaces.md) with a shared lockfile,
-`.pnpmfile.cjs` should be in the root of the monorepo.
+`.pnpmfile.mjs` should be in the root of the monorepo.
 
 ## Hooks
 
@@ -45,7 +45,7 @@ a debug log for the step.
 
 #### Usage
 
-Example `.pnpmfile.cjs` (changes the dependencies of a dependency):
+Example `.pnpmfile.mjs` (changes the dependencies of a dependency):
 
 ```js
 function readPackage(pkg, context) {
@@ -58,19 +58,17 @@ function readPackage(pkg, context) {
     }
     context.log('bar@1 => bar@2 in dependencies of foo')
   }
-  
+
   // This will change any packages using baz@x.x.x to use baz@1.2.3
   if (pkg.dependencies.baz) {
     pkg.dependencies.baz = '1.2.3';
   }
-  
+
   return pkg
 }
 
-module.exports = {
-  hooks: {
-    readPackage
-  }
+export const hooks = {
+  readPackage
 }
 ```
 
@@ -92,17 +90,15 @@ For example, [@pnpm/plugin-better-defaults](https://github.com/pnpm/plugin-bette
 
 #### Usage example
 
-```js title=".pnpmfile.cjs"
-module.exports = {
-  hooks: {
-    updateConfig (config) {
-      return Object.assign(config, {
-        enablePrePostScripts: false,
-        optimisticRepeatInstall: true,
-        resolutionMode: 'lowest-direct',
-        verifyDepsBeforeRun: 'install',
-      })
-    }
+```js title=".pnpmfile.mjs"
+export const hooks = {
+  updateConfig (config) {
+    return Object.assign(config, {
+      enablePrePostScripts: false,
+      optimisticRepeatInstall: true,
+      resolutionMode: 'lowest-direct',
+      verifyDepsBeforeRun: 'install',
+    })
   }
 }
 ```
@@ -120,16 +116,14 @@ a debug log for the step.
 
 #### Usage example
 
-```js title=".pnpmfile.cjs"
+```js title=".pnpmfile.mjs"
 function afterAllResolved(lockfile, context) {
   // ...
   return lockfile
 }
 
-module.exports = {
-  hooks: {
-    afterAllResolved
-  }
+export const hooks = {
+  afterAllResolved
 }
 ```
 
@@ -152,27 +146,25 @@ Unlike `hooks.readPackage`, which modifies how dependencies are resolved during 
 
 #### Usage example
 
-```js title=".pnpmfile.cjs"
+```js title=".pnpmfile.mjs"
 function beforePacking(pkg) {
   // Remove development-only fields from published package
   delete pkg.devDependencies
   delete pkg.scripts.test
-  
+
   // Add publication metadata
   pkg.publishedAt = new Date().toISOString()
-  
+
   // Modify package exports for production
   if (pkg.name === 'my-package') {
     pkg.main = './dist/index.js'
   }
-  
+
   return pkg
 }
 
-module.exports = {
-  hooks: {
-    beforePacking
-  }
+export const hooks = {
+  beforePacking
 }
 ```
 
@@ -217,12 +209,10 @@ Finder functions are used with `pnpm list` and `pnpm why` via the `--find-by` fl
 
 Example:
 
-```js title=".pnpmfile.cjs"
-module.exports = {
-  finders: {
-    react17: (ctx) => {
-      return ctx.readManifest().peerDependencies?.react === "^17.0.0"
-    }
+```js title=".pnpmfile.mjs"
+export const finders = {
+  react17: (ctx) => {
+    return ctx.readManifest().peerDependencies?.react === "^17.0.0"
   }
 }
 ```
@@ -244,14 +234,14 @@ See [Finders] for more details.
 * Default: **false**
 * Type: **Boolean**
 
-`.pnpmfile.cjs` will be ignored. Useful together with `--ignore-scripts` when you
+The pnpmfile will be ignored. Useful together with `--ignore-scripts` when you
 want to make sure that no script gets executed during install.
 
 ### pnpmfile
 
-* Default: **['.pnpmfile.cjs']**
+* Default: **['.pnpmfile.mjs']**
 * Type: **path[]**
-* Example: **['.pnpm/.pnpmfile.cjs']**
+* Example: **['.pnpm/.pnpmfile.mjs']**
 
 The location of the local pnpmfile(s).
 
@@ -259,7 +249,7 @@ The location of the local pnpmfile(s).
 
 * Default: **null**
 * Type: **path**
-* Example: **~/.pnpm/global_pnpmfile.cjs**
+* Example: **~/.pnpm/global_pnpmfile.mjs**
 
 The location of a global pnpmfile. A global pnpmfile is used by all projects
 during installation.

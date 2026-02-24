@@ -36,7 +36,7 @@ second via `require('lodash2')`.
 
 This gets even more powerful when combined with hooks. Maybe you want to replace
 `lodash` with `awesome-lodash` in all the packages in `node_modules`. You can
-easily achieve that with the following `.pnpmfile.cjs`:
+easily achieve that with the following `.pnpmfile.mjs`:
 
 ```js
 function readPackage(pkg) {
@@ -46,9 +46,7 @@ function readPackage(pkg) {
   return pkg
 }
 
-module.exports = {
-  hooks: {
-    readPackage
-  }
+export const hooks = {
+  readPackage
 }
 ```
